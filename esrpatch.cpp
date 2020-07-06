@@ -22,15 +22,15 @@
 #include "Patcher.h"
 
 int main(int argc, char *argv[]) {
-  if (argc != 2) {
-    std::cout << "Usage: " << argv[0] << " <ISO or BIN to patch>" << std::endl;
+  if (argc != 5) {
+    std::cout << "Usage: " << argv[0] << " <ISO or BIN to patch> <payload (VIDEO_TS.IFO)> <payload (VTS_01_0.IFO)> <ESR launcher elf>" << std::endl;
     return 1;
   }
   
   bool ok;
   CPatcher m_patcher;
   
-  switch (m_patcher.doPatch(argv[1])) {
+  switch (m_patcher.doPatch(argv[1], argv[2], argv[3], argv[4])) {
     case ESR_FILE_OK:
       ok = true;
       break;
@@ -49,6 +49,21 @@ int main(int argc, char *argv[]) {
       std::cout << "No UDF descriptor found in " << argv[1] << "." << std::endl;
       ok = false;
       break;
+
+	case ESR_FILE_CANNOT_OPEN1:
+		std::cout << "Could not open " << argv[2] << "." << std::endl;
+		ok = false;
+		break;
+
+	case ESR_FILE_CANNOT_OPEN2:
+		std::cout << "Could not open " << argv[3] << "." << std::endl;
+		ok = false;
+		break;
+
+	case ESR_FILE_CANNOT_OPEN3:
+		std::cout << "Could not open " << argv[4] << "." << std::endl;
+		ok = false;
+		break;
 
     default:
       std::cout << "Unknown error during patching procedure." << std::endl;
